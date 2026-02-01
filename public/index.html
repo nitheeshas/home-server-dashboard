@@ -295,7 +295,7 @@
             border-color: var(--accent-color);
             border-style: dashed;
             opacity: 0.8;
-            pointer-events: none;
+            cursor: move;
         }
 
         body.edit-mode .card-actions {
@@ -501,6 +501,12 @@
                     card.href = link.url;
                     card.target = '_blank';
                     card.dataset.originalIndex = index;
+
+                    card.onclick = (e) => {
+                        if (isEditMode) {
+                            e.preventDefault();
+                        }
+                    };
 
                     // 1. Icon & Status
                     const iconContainer = document.createElement('div');
