@@ -1,49 +1,60 @@
-[
-  {
-    "name": "Immich",
-    "url": "http://192.168.178.58:2283/",
-    "category": "Media"
-  },
-  {
-    "name": "FritzBox",
-    "url": "http://192.168.178.1/",
-    "category": "Networking"
-  },
-  {
-    "name": "FritzRepeater",
-    "url": "http://192.168.178.85/",
-    "category": "Networking"
-  },
-  {
-    "name": "Home Assistant",
-    "url": "https://192.168.178.58:8123/",
-    "category": "Smart Home",
-    "icon": ""
-  },
-  {
-    "name": "Zigbee2MQTT",
-    "url": "http://192.168.178.58:8080/",
-    "category": "Smart Home"
-  },
-  {
-    "name": "Zigbee Coordinator",
-    "url": "http://192.168.178.68/",
-    "category": "Smart Home",
-    "icon": "SLZB-06"
-  },
-  {
-    "name": "Wyoming-Piper",
-    "url": "http://192.168.178.58:5000/",
-    "category": "Smart Home"
-  },
-  {
-    "name": "Wyoming-Whisper",
-    "url": "http://192.168.178.58:10300/",
-    "category": "Smart Home"
-  },
-  {
-    "name": "3D Printer",
-    "url": "http://192.168.178.87/",
-    "category": "Tools"
+{
+  "links": [
+    {
+      "name": "Immich",
+      "url": "http://192.168.178.58:2283/",
+      "category": "Media"
+    },
+    {
+      "name": "FritzBox",
+      "url": "http://192.168.178.1/",
+      "category": "Networking"
+    },
+    {
+      "name": "FritzRepeater",
+      "url": "http://192.168.178.85/",
+      "category": "Networking"
+    },
+    {
+      "name": "Home Assistant",
+      "url": "https://192.168.178.58:8123/",
+      "category": "Smart Home",
+      "icon": ""
+    },
+    {
+      "name": "Zigbee2MQTT",
+      "url": "http://192.168.178.58:8080/",
+      "category": "Smart Home"
+    },
+    {
+      "name": "Zigbee Coordinator",
+      "url": "http://192.168.178.68/",
+      "category": "Smart Home",
+      "icon": "SLZB-06"
+    },
+    {
+      "name": "Wyoming-Piper",
+      "url": "http://192.168.178.58:5000/",
+      "category": "Smart Home"
+    },
+    {
+      "name": "Wyoming-Whisper",
+      "url": "http://192.168.178.58:10300/",
+      "category": "Smart Home"
+    },
+    {
+      "name": "3D Printer",
+      "url": "http://192.168.178.87/",
+      "category": "Tools"
+    }
+  ],
+  "categories": [
+    "Media",
+    "Networking",
+    "Smart Home",
+    "Tools"
+  ],
+  "settings": {
+    "showStatus": true
   }
-]
+}

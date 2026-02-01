@@ -12,9 +12,13 @@ app.use(express.json());
 
 // Initialize data if missing
 if (!fs.existsSync(DATA_FILE)) {
-    const initialData = [
-        { name: 'Google', url: 'https://google.com', category: 'External' }
-    ];
+    const initialData = {
+        links: [
+            { name: 'Google', url: 'https://google.com', category: 'External' }
+        ],
+        categories: ['External'],
+        settings: { showStatus: true }
+    };
     fs.writeFileSync(DATA_FILE, JSON.stringify(initialData, null, 2));
 }
 
