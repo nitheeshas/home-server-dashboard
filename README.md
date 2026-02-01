@@ -2,8 +2,6 @@
 
 A modern, lightweight, and customizable dashboard for your home server services. Built with Node.js and vanilla JavaScript, featuring a sleek "Glassmorphism" black theme.
 
-![Dashboard Preview](https://via.placeholder.com/1200x600?text=Home+Server+Dashboard+Preview) *Add your own screenshot here!*
-
 ## 🚀 Features
 
 -   **Glassmorphism UI:** Modern black theme with frosted glass effects and smooth animations.
