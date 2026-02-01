@@ -295,7 +295,7 @@
             border-color: var(--accent-color);
             border-style: dashed;
             opacity: 0.8;
-            pointer-events: none;
+            cursor: move;
         }
 
         body.edit-mode .card-actions {
@@ -388,6 +388,7 @@
             <div class="subtitle">Local Network Services</div>
         </div>
         <div class="controls">
+            <button id="cancelBtn" class="btn-secondary" onclick="cancelEdit()" style="display: none;">Cancel</button>
             <button id="toggleEditBtn" class="btn-secondary" onclick="toggleEditMode()">Edit</button>
             <button id="addBtn" class="btn-primary" onclick="openAddModal()" style="display: none;">Add Link</button>
         </div>
@@ -430,6 +431,7 @@
 
     <script>
         let links = [];
+        let linksBackup = [];
         let isEditMode = false;
         let editingIndex = null;
         let sortables = [];
@@ -501,6 +503,12 @@
                     card.href = link.url;
                     card.target = '_blank';
                     card.dataset.originalIndex = index;
+
+                    card.onclick = (e) => {
+                        if (isEditMode) {
+                            e.preventDefault();
+                        }
+                    };
 
                     // 1. Icon & Status
                     const iconContainer = document.createElement('div');
@@ -603,31 +611,63 @@
                 });
             });
             links = newLinks;
-            syncLinks();
-            // We don't necessarily need to re-render here as DOM is already in place,
-            // but we might want to refresh indices for next actions.
+            // No automatic syncLinks() here to allow staged edits
             renderLinks(); 
         }
 
         function toggleEditMode() {
-            isEditMode = !isEditMode;
-            document.body.classList.toggle('edit-mode', isEditMode);
-            
-            // Toggle Sortables
-            sortables.forEach(s => s.option('disabled', !isEditMode));
+            if (!isEditMode) {
+                // Entering Edit Mode
+                linksBackup = JSON.parse(JSON.stringify(links));
+                enterEditModeUI();
+            } else {
+                // Saving Edits
+                saveEdits();
+            }
+        }
+
+        async function saveEdits() {
+            await syncLinks();
+            exitEditModeUI();
+        }
+
+        function cancelEdit() {
+            if (confirm('Discard all changes?')) {
+                links = JSON.parse(JSON.stringify(linksBackup));
+                exitEditModeUI();
+                renderLinks();
+                updateCategoryDatalist();
+            }
+        }
+
+        function enterEditModeUI() {
+            isEditMode = true;
+            document.body.classList.add('edit-mode');
+            sortables.forEach(s => s.option('disabled', false));
 
             const editBtn = document.getElementById('toggleEditBtn');
             const addBtn = document.getElementById('addBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
             
-            if (isEditMode) {
-                editBtn.innerText = 'Done';
-                editBtn.classList.replace('btn-secondary', 'btn-primary');
-                addBtn.style.display = 'block';
-            } else {
-                editBtn.innerText = 'Edit';
-                editBtn.classList.replace('btn-primary', 'btn-secondary');
-                addBtn.style.display = 'none';
-            }
+            editBtn.innerText = 'Save';
+            editBtn.classList.replace('btn-secondary', 'btn-primary');
+            addBtn.style.display = 'block';
+            cancelBtn.style.display = 'block';
+        }
+
+        function exitEditModeUI() {
+            isEditMode = false;
+            document.body.classList.remove('edit-mode');
+            sortables.forEach(s => s.option('disabled', true));
+
+            const editBtn = document.getElementById('toggleEditBtn');
+            const addBtn = document.getElementById('addBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            
+            editBtn.innerText = 'Edit';
+            editBtn.classList.replace('btn-primary', 'btn-secondary');
+            addBtn.style.display = 'none';
+            cancelBtn.style.display = 'none';
         }
 
         function openAddModal() {
@@ -681,7 +721,7 @@
                 links[editingIndex] = linkData;
             }
 
-            await syncLinks();
+            // No automatic syncLinks() here to allow staged edits
             closeModal();
             renderLinks();
             updateCategoryDatalist();
@@ -693,7 +733,7 @@
             
             if (confirm('Remove this link?')) {
                 links.splice(index, 1);
-                await syncLinks();
+                // No automatic syncLinks() here to allow staged edits
                 renderLinks();
             }
         }
