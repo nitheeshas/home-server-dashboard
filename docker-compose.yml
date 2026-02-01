@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  dashboard:
+    build: .
+    container_name: home-server-dashboard
+    restart: unless-stopped
+    ports:
+      - "80:3000"
+    volumes:
+      # Mount the data.json file to persist your links
+      # NOTE: Ensure 'data.json' exists on your host before running this,
+      # otherwise Docker might create it as a directory.
+      - ./data.json:/app/data.json
