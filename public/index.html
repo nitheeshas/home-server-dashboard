@@ -534,6 +534,28 @@
             display: block;
         }
 
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            background-color: #0f172a;
+            color: white;
+            box-sizing: border-box;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+            appearance: none;
+            background-image: linear-gradient(45deg, transparent 50%, #94a3b8 50%), linear-gradient(135deg, #94a3b8 50%, transparent 50%);
+            background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%;
+            background-size: 6px 6px, 6px 6px;
+            background-repeat: no-repeat;
+        }
+
+        select:focus {
+            border-color: var(--accent-color);
+        }
+
         .modal-actions {
             display: flex;
             justify-content: flex-end;
@@ -600,8 +622,7 @@
                 </div>
                 <div class="form-group">
                     <label for="linkCategory">Category</label>
-                    <input type="text" id="linkCategory" placeholder="e.g. Media, Smart Home" autocomplete="off" list="categoryList">
-                    <datalist id="categoryList"></datalist>
+                    <select id="linkCategory"></select>
                     <div id="errorCategory" class="field-error"></div>
                 </div>
                 <div class="form-group">
@@ -683,8 +704,11 @@
         }
 
         function updateCategoryDatalist() {
-            const datalist = document.getElementById('categoryList');
-            datalist.innerHTML = categories.map(cat => `<option value="${cat}">`).join('');
+            const select = document.getElementById('linkCategory');
+            if (!select) return;
+            const list = categories.length > 0 ? categories : ['General'];
+            const placeholder = '<option value="" disabled selected>Select a category</option>';
+            select.innerHTML = placeholder + list.map(cat => `<option value="${cat}">${cat}</option>`).join('');
         }
 
         async function checkStatus(dot, url) {
@@ -1108,9 +1132,10 @@
             document.getElementById('modalTitle').innerText = 'New Service';
             document.getElementById('linkName').value = '';
             document.getElementById('linkUrl').value = '';
-            document.getElementById('linkCategory').value = '';
             document.getElementById('linkIcon').value = '';
             clearFieldErrors();
+            updateCategoryDatalist();
+            document.getElementById('linkCategory').value = '';
             
             const modal = document.getElementById('modal');
             modal.classList.add('show');
@@ -1123,9 +1148,10 @@
             document.getElementById('modalTitle').innerText = 'Edit Service';
             document.getElementById('linkName').value = link.name;
             document.getElementById('linkUrl').value = link.url;
-            document.getElementById('linkCategory').value = link.category || '';
             document.getElementById('linkIcon').value = link.icon || '';
             clearFieldErrors();
+            updateCategoryDatalist();
+            document.getElementById('linkCategory').value = link.category || '';
             
             const modal = document.getElementById('modal');
             modal.classList.add('show');
@@ -1181,7 +1207,7 @@
 
             const name = nameRaw.trim();
             let url = urlRaw.trim();
-            const category = categoryRaw.trim() || 'General';
+            const category = categoryRaw.trim();
             const icon = iconRaw.trim();
 
             let hasError = false;
@@ -1191,6 +1217,11 @@
             }
             if (!url) {
                 setFieldError('linkUrl', 'errorUrl', 'URL is required.');
+                hasError = true;
+            }
+
+            if (!category) {
+                setFieldError('linkCategory', 'errorCategory', 'Please choose a category.');
                 hasError = true;
             }
 
