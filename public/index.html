@@ -415,9 +415,6 @@
             opacity: 1;
         }
 
-        body.edit-mode .move-handle {
-            display: block;
-        }
 
         body.edit-mode .card {
             border-color: var(--accent-color);
@@ -447,6 +444,10 @@
 
         body.edit-mode .card-actions {
             pointer-events: auto;
+        }
+
+        body.edit-mode .move-handle {
+            display: block;
         }
 
         /* Modal */
@@ -573,6 +574,7 @@
             background-color: #f87171;
             box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
         }
+
     </style>
 </head>
 <body>
@@ -629,7 +631,8 @@
                     <label for="linkIcon">Icon Name (Optional)</label>
                     <input type="text" id="linkIcon" placeholder="e.g. plex, home-assistant, fritzbox" autocomplete="off">
                     <small style="color: var(--text-secondary); font-size: 0.75rem; margin-top: 5px; display: block;">
-                        Leave blank to auto-guess from name.
+                        Enter an icon name or a <b>full image URL</b>. Browse available icons 
+                        <a href="https://github.com/walkxcode/dashboard-icons/tree/main/png" target="_blank" style="color: var(--accent-color); text-decoration: none; border-bottom: 1px dashed var(--accent-color);">here</a>.
                     </small>
                     <div id="errorIcon" class="field-error"></div>
                 </div>
@@ -837,23 +840,29 @@
                         }
                     };
 
-                    // Try Dashboard Icons (CDN) first
-                    let iconSearchName = link.icon || link.name.toLowerCase().replace(/[\s_]/g, '-');
-                    const dashboardIconUrl = `https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/${iconSearchName}.png`;
-                    const googleFaviconUrl = `https://www.google.com/s2/favicons?sz=64&domain_url=${encodeURIComponent(link.url)}`;
+                    const isFullUrl = (str) => str && /^https?:\/\//.test(str);
                     const isLocal = link.url.includes('192.168.') || link.url.includes('10.') || link.url.includes('172.') || link.url.includes('localhost') || link.url.includes('.local');
 
-                    img.src = dashboardIconUrl;
-                    
-                    // Error handling chain
+                    let primaryIcon;
+                    if (isFullUrl(link.icon)) {
+                        primaryIcon = link.icon;
+                    } else {
+                        const iconName = link.icon || link.name.toLowerCase().replace(/[\s_]/g, '-');
+                        primaryIcon = `https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/${iconName}.png`;
+                    }
+
+                    // Define error handler BEFORE setting src
                     img.onerror = function() {
-                        if (!this.dataset.triedGoogle && !isLocal) {
+                        // If it's a custom URL, don't try favicon, just fallback
+                        if (!isFullUrl(link.icon) && !this.dataset.triedGoogle && !isLocal) {
                             this.dataset.triedGoogle = 'true';
-                            this.src = googleFaviconUrl;
+                            this.src = `https://www.google.com/s2/favicons?sz=64&domain_url=${encodeURIComponent(link.url)}`;
                         } else {
                             showFallback();
                         }
                     };
+
+                    img.src = primaryIcon;
 
                     iconContainer.appendChild(img);
 
